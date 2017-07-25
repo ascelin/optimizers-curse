@@ -1,6 +1,7 @@
 
 
 read.data <- function(fname) {
+	cat('Reading in file', fname, '\n') 
 	dat <- read.csv(fname)
 	colnames(dat) <- c( 'expected.val', 'revealed.val', 
 						'expected.cost', 'revealed.cost', 
@@ -8,6 +9,7 @@ read.data <- function(fname) {
 						'summed.expected.prob', 'summed.revealed.prob', 
 						'num.projects.selected')
 		
+	
 	return(dat)
 }
  
@@ -104,6 +106,8 @@ read.data <- function(fname) {
 
 	# hist(benCost.surprise, breaks=50, main='Surprise in benefit/cost')
 	# abline(v=0, col='red')
+
+	browser()
 
 
 	# To save the calculated suprise values for futher use, add them to the
