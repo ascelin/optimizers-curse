@@ -12,53 +12,32 @@ source( 'plot.island.results.functions.R' )
 
 # Plot the resuts for the 5 different strategies for selecting projects
 
-
 p <- function(fname) {
-	#x <- '/Users/ascelin/Google Drive/Papers/Optimizers curse/chris_matlab/'
-	#x <- '/Users/ascelin/Dropbox/optimizers_curse/sims/Chris/'
-
-	#x <- '/Users/ascelin/Dropbox/optimizers_curse/sims/Chris/unif_dist/'
 	x <- 'updated_results/'
 	return(paste(x,fname, sep=''))
 
 }
  
-
-# ran <- read.data('random_allocation_nisl3_nsp3_rep1000.csv') # new 
-#ran <- read.data('random_allocation_nisl3_nsp4_rep1000.csv')                   
-ran <- read.data(p('random_allocation_nisl3_nsp4_rep10000.csv'))
+ran <- read.data(p('random_allocation_nisl3_nsp4_rep1000.csv'))
 ran <- plot.results(ran, 'RANDOM')
 
 par(mfrow=c(3,2))
-#ppp <- read.data(p('ppp_allocation_nisl3_nsp4_rep2500.csv'))
-#ppp <- read.data(p('ppp_allocation_nisl3_nsp4_rep1000.csv'))
-ppp <- read.data(p('ppp_allocation_nisl3_nsp4_rep10000.csv'))
+ppp <- read.data(p('ppp_allocation_nisl3_nsp4_rep1000.csv'))
 ppp <- plot.results(ppp, 'PPP')
 
-
-# par(mfrow=c(3,2))
-#cb <- read.data(p('cost_ben_allocation_nisl3_nsp4_rep2500.csv'))
-#cb <- read.data(p('cost_ben_allocation_nisl3_nsp4_rep1000.csv'))
 # cb <- read.data(p('cost_ben_allocation_nisl3_nsp4_rep1000.csv'))
 # cb <- plot.results(cb, 'COST:BEN')
 
 par(mfrow=c(3,2))
-#opt <- read.data(p('opt_allocation_nisl3_nsp4_rep2500.csv'))
-#opt <- read.data(p('opt_allocation_nisl3_nsp4_rep1000.csv'))
-opt <- read.data(p('opt_allocation_nisl3_nsp4_rep10000.csv'))
+opt <- read.data(p('opt_allocation_nisl3_nsp4_rep1000.csv'))
 opt<- plot.results(opt, 'OPTIMAL')
 
 
-# par(mfrow=c(3,2))
-# opt.true <- read.data(p('opt_allocation_true_nisl3_nsp4_rep25000.csv'))
-# opt.true <- read.data(p('opt_allocation_true_nisl4_nsp4_rep1000.csv'))
  opt.true <- read.data(p('opt_allocation_true_nisl3_nsp4_rep10000.csv'))
  opt.true<- plot.results(opt.true, 'TRUE OPTIMAL')
 
 
-
 plot.performance.vs.suprise()
-
 
 
 plot.suprise.dists <- function(x, name) {
