@@ -1,7 +1,7 @@
 
 
 read.data <- function(fname) {
-	cat('Reading in file', fname, '\n') 
+	
 	dat <- read.csv(fname)
 	colnames(dat) <- c( 'expected.val', 'revealed.val', 
 						'expected.cost', 'revealed.cost', 
@@ -9,7 +9,13 @@ read.data <- function(fname) {
 						'summed.expected.prob', 'summed.revealed.prob', 
 						'num.projects.selected')
 		
+	# remove any entries with NaN's in them
 	
+	rows.with.NAs <- length(which(is.na(dat$revealed.val)==TRUE))
+	dat <- na.omit(dat)
+
+	cat('Reading in file', fname, '[omiting ', rows.with.NAs, 'rows with NAs]\n') 
+
 	return(dat)
 }
  
@@ -107,7 +113,7 @@ read.data <- function(fname) {
 	# hist(benCost.surprise, breaks=50, main='Surprise in benefit/cost')
 	# abline(v=0, col='red')
 
-	browser()
+	# browser()
 
 
 	# To save the calculated suprise values for futher use, add them to the
