@@ -207,18 +207,25 @@ plot.performance.vs.suprise <- function() {
 	abline(h=0, col='grey')
 
 
-	xmin <- min(ppp$revealed.val, ran$revealed.val, opt$revealed.val)
-	xmax <- max(ppp$revealed.val, ran$revealed.val, opt$revealed.val)
-	ymin <- min(ppp$benefit.surprise,ran$benefit.surprise, opt$benefit.surprise)
-	ymax <- max(ppp$benefit.surprise,ran$benefit.surprise, opt$benefit.surprise)
+	plot.segments <- function(x,y,col){
+		segments( mean(x)-sd(x), mean(y), mean(x)+sd(x), mean(y), col=col )
+		segments( mean(x), mean(y)-sd(y), mean(x), mean(y) + sd(y), col=col )
+	}
+	plot.points.and.segments <- function(x, y, col){
+		points( mean(x), mean(y), col=col, pch=1, cex=1.5)
+		plot.segments(x, y, col)
+	}
 
-	plot( mean(ppp$revealed.val), mean(ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)]), #mean(ppp$benefit.surprise), 
-		col='red', pch=1, 
-		main='revealed benefit vs surprise in b', xlim=c(0, 0.9), ylim=c(-0.9,  0.05))
-	points( mean(ran$revealed.val), mean(ran$benefit.surprise[which(ran$benefit.surprise > -Inf)]), 
-		col='black', pch=1)
-	points( mean(opt$revealed.val), mean(opt$benefit.surprise[which(opt$benefit.surprise > -Inf)]), col='blue', pch=1)
-	points( mean(opt.true$revealed.val), mean(opt.true$benefit.surprise[which(opt.true$benefit.surprise > -Inf)]), col='green', pch=1)
+	par(mfrow=c(1,1))
+
+	plot( mean(ppp$revealed.val), mean(ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)]),
+		col='red', pch=1, xlab='revealed benefit', ylab='surprise in benefit', xlim=c(0, 0.9), ylim=c(-1.5,  0.5), cex=1.5)
+	plot.segments(ppp$revealed.val, ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)], col='red' )
+	
+	plot.points.and.segments(ran$revealed.val, ran$benefit.surprise[which(ran$benefit.surprise > -Inf)], col='black')
+	plot.points.and.segments(opt$revealed.val, opt$benefit.surprise[which(opt$benefit.surprise > -Inf)], col='blue')
+	plot.points.and.segments(opt.true$revealed.val, opt.true$benefit.surprise[which(opt.true$benefit.surprise > -Inf)], col='green')
+
 
 	legend('topright', c('ppp', 'random', 'opt', 'opt true'), col=c('red','black', 'blue', 'green'), pch=c(1,1,1,1) )
 	abline(h=0, col='grey')
