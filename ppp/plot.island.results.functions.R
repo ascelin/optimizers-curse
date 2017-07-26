@@ -3,11 +3,20 @@
 read.data <- function(fname) {
 	
 	dat <- read.csv(fname)
-	colnames(dat) <- c( 'expected.val', 'revealed.val', 
-						'expected.cost', 'revealed.cost', 
-						'expected.val.all.success', 'revealed.val.all.success',
-						'summed.expected.prob', 'summed.revealed.prob', 
-						'num.projects.selected')
+	colnames(dat) <- c( 'expected.val', # sum of expected benefits multiplied by the expected prob of succsess for all projectes selected
+						'true.expected.val', # sum of the true benefits x true prob of success for all selected projects
+						'revealed.val', # true outcome: sum of the true benefits of all successful projects (given have rolled dice and seen which ones failed)
+
+						'expected.cost', # These don't incoporate success of failure, just expected cost
+						'revealed.cost', # true cost of all selected projects
+
+						'expected.val.all.success', # estimated value of all projects selected (assuming all successful)
+						'revealed.val.all.success', # true value of all projects selected (assuming all successful)
+
+						'summed.expected.prob',  # Sum of expected prob of success for all projects selected
+						'summed.revealed.prob',  # Sum of revealed prob of success for all projects selected
+						'num.projects.selected' # The number of projects chosen
+						)
 		
 	# remove any entries with NaN's in them
 	
@@ -219,7 +228,10 @@ plot.performance.vs.suprise <- function() {
 	par(mfrow=c(1,1))
 
 	plot( mean(ppp$revealed.val), mean(ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)]),
-		col='red', pch=1, xlab='revealed benefit', ylab='surprise in benefit', xlim=c(0, 0.9), ylim=c(-1.5,  0.5), cex=1.5)
+		col='red', pch=1, xlab='revealed benefit', ylab='surprise in benefit', 
+		# xlim=c(0, 0.9), ylim=c(-1.5,  0.5), 
+		xlim=c(0, 7), ylim=c(-1.5,  0.5), 
+		cex=1.5)
 	plot.segments(ppp$revealed.val, ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)], col='red' )
 	
 	plot.points.and.segments(ran$revealed.val, ran$benefit.surprise[which(ran$benefit.surprise > -Inf)], col='black')
@@ -229,7 +241,6 @@ plot.performance.vs.suprise <- function() {
 
 	legend('topright', c('ppp', 'random', 'opt', 'opt true'), col=c('red','black', 'blue', 'green'), pch=c(1,1,1,1) )
 	abline(h=0, col='grey')
-
 	browser()
 
 }
