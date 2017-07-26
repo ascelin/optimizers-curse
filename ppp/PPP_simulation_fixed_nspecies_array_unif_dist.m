@@ -39,7 +39,7 @@ est_sigma = 0.5; % bigger -> more variation
 shape_prob = 4; %smaller = more variation. ~5 for lots of variation, ~30-50 for minimal variation
 
 % Arrays to store the decisions for each of the different methods
-rev_opt_array = zeros(reps,9); %optimal choice based on the revealed values (after projects succeed/fail)
+rev_opt_array = zeros(reps,10); %optimal choice based on the revealed values (after projects succeed/fail)
 true_opt_array = rev_opt_array; %optimal choice based on the true values
 exp_opt_array = rev_opt_array; %  choice using the expected values
 cost_ben_array = exp_opt_array; %  choice using benefit/cost
@@ -142,7 +142,7 @@ while r < reps
     
     %create an array that holds all of the important quantities, of which a
     %subset will be stored
-    outputs = [est_value_vec,rev_value_vec,est_cost_vec,cost_vec,est_value_vec_success,value_vec_success,est_prob_vec,true_prob_vec,sum(logical_matrix,2)];
+    outputs = [est_value_vec,value_vec,rev_value_vec,est_cost_vec,cost_vec,est_value_vec_success,value_vec_success,est_prob_vec,true_prob_vec,sum(logical_matrix,2)];
     %cols: 1. exp value, 2. true value, 3. exp. cost, 4. rev. cost, 5. exp val all success, 
     %6. rev val all success, 7. sum exp pr, 8. sum rev pr., 9 no. proj selected
     
@@ -220,8 +220,10 @@ while r < reps
         end
     end
     %update the outputs with the new values
-    outputs = [est_value_vec,rev_value_vec,est_cost_vec,cost_vec,est_value_vec_success,value_vec_success,est_prob_vec,true_prob_vec,sum(logical_matrix,2)];
-    
+    outputs = [est_value_vec,value_vec,rev_value_vec,est_cost_vec,cost_vec,est_value_vec_success,value_vec_success,est_prob_vec,true_prob_vec,sum(logical_matrix,2)];
+    if any(isnan(outputs(:)))
+        keyboard
+    end
     %store the data for each different strategy
     rand_sel_array(r,:) = outputs(rand_action_set,:);
     cost_ben_array(r,:) = outputs(cost_ben_action_set,:);
@@ -230,14 +232,20 @@ while r < reps
     true_opt_array(r,:) = outputs(true_opt,:);
     exp_opt_array(r,:) = outputs(exp_opt,:);
     
+% 
+%     if rev_opt_array(r,:) == 0
+%         keyboard
+%     end
+
 end
+
 %scale all of the values by the performance of the revealed optimal choice
-true_opt_array(:,[1,2,5,6]) = true_opt_array(:,[1,2,5,6])./repmat(rev_opt_array(:,6),1,4);
-exp_opt_array(:,[1,2,5,6]) = exp_opt_array(:,[1,2,5,6])./repmat(rev_opt_array(:,6),1,4);
-cost_ben_array(:,[1,2,5,6]) = cost_ben_array(:,[1,2,5,6])./repmat(rev_opt_array(:,6),1,4);
-ppp_array(:,[1,2,5,6]) = ppp_array(:,[1,2,5,6])./repmat(rev_opt_array(:,6),1,4);
-rand_sel_array(:,[1,2,5,6]) = rand_sel_array(:,[1,2,5,6])./repmat(rev_opt_array(:,6),1,4);
-rev_opt_array(:,[1,2,5,6]) = rev_opt_array(:,[1,2,5,6])./repmat(rev_opt_array(:,6),1,4);
+true_opt_array(:,[1,3,6,7]) = true_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+exp_opt_array(:,[1,3,6,7]) = exp_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+cost_ben_array(:,[1,3,6,7]) = cost_ben_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+ppp_array(:,[1,3,6,7]) = ppp_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+rand_sel_array(:,[1,3,6,7]) = rand_sel_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+rev_opt_array(:,[1,3,6,7]) = rev_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
 
 % calculate means
 rev_opt_mean = mean(rev_opt_array);
