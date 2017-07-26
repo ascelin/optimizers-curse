@@ -13,7 +13,8 @@ source( 'plot.island.results.functions.R' )
 # Plot the resuts for the 5 different strategies for selecting projects
 
 p <- function(fname) {
-	x <- 'updated_results/'
+	#x <- 'updated_results/'
+	x <- 'updated_results_no_scaling/'
 	return(paste(x,fname, sep=''))
 
 }
@@ -29,12 +30,17 @@ ppp <- plot.results(ppp, 'PPP')
 # cb <- plot.results(cb, 'COST:BEN')
 
 par(mfrow=c(3,2))
+# the optimal on all the expected values (don't know which succeed or fail)
 opt <- read.data(p('opt_allocation_nisl3_nsp4_rep1000.csv'))
 opt<- plot.results(opt, 'OPTIMAL')
 
+# the optimal on all the revealed values (don't know which succeed or fail)
+opt.true <- read.data(p('opt_allocation_true_nisl3_nsp4_rep1000.csv'))
+opt.true<- plot.results(opt.true, 'TRUE OPTIMAL')
 
- opt.true <- read.data(p('opt_allocation_true_nisl3_nsp4_rep10000.csv'))
- opt.true<- plot.results(opt.true, 'TRUE OPTIMAL')
+# the optimal on all the revealed values (and knowing which will succeed or fail)
+opt.true.revealed <- read.data(p('opt_allocation_true_nisl3_nsp4_rep1000.csv'))
+opt.true.revealed<- plot.results(opt.true, 'TRUE OPTIMAL REVEALED')
 
 
 plot.performance.vs.suprise()
