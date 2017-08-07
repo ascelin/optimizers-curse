@@ -1,4 +1,5 @@
 
+library('boot') 	# For doing bootstrap estimates for the CIs of the mean
 
 read.data <- function(fname) {
 	
@@ -243,7 +244,7 @@ plot.performance.vs.suprise <- function() {
 
 
 
-        browser()
+        #browser()
 	}
 	plot.points.and.segments <- function(x, y, col){
 		points( mean(x), mean(y), col=col, pch=1, cex=1.5)
