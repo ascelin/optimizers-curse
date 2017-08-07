@@ -240,12 +240,12 @@ while r < reps
 end
 
 %scale all of the values by the performance of the revealed optimal choice
-true_opt_array(:,[1,3,6,7]) = true_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-exp_opt_array(:,[1,3,6,7]) = exp_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-cost_ben_array(:,[1,3,6,7]) = cost_ben_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-ppp_array(:,[1,3,6,7]) = ppp_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-rand_sel_array(:,[1,3,6,7]) = rand_sel_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-rev_opt_array(:,[1,3,6,7]) = rev_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+% true_opt_array(:,[1,3,6,7]) = true_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+% exp_opt_array(:,[1,3,6,7]) = exp_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+% cost_ben_array(:,[1,3,6,7]) = cost_ben_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+% ppp_array(:,[1,3,6,7]) = ppp_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+% rand_sel_array(:,[1,3,6,7]) = rand_sel_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+% rev_opt_array(:,[1,3,6,7]) = rev_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
 
 % calculate means
 rev_opt_mean = mean(rev_opt_array);
