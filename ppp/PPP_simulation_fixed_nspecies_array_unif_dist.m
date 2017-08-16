@@ -1,22 +1,31 @@
+function PPP_simulation_fixed_nspecies_array_unif_dist
+use_file = true;
+if use_file == true
+    r_nums = csvread('random_numbers10000000.csv');
+end
+counter =1 ;
+% unifrnd_2(1,2,[3,5])
+
+
 n_islands = 3;      %number of islands
 n_species = 4;
 total_species = n_islands*n_species;
 Budget = 2e7;       %project budget
-reps = 10000;          %number of trials
+reps = 1000;          %number of trials
 cost_unceratinty = true;
-over_budget_fail = true; % choose random erad to fail if over budget 
+over_budget_fail = true; % choose random erad to fail if over budget
 
-% Only has effect when overbudget_fail = false. If false then it will reduce the total benefit of projects proportional to the 
+% Only has effect when overbudget_fail = false. If false then it will reduce the total benefit of projects proportional to the
 % amount you're over budget. Note code checks for over_budget_fail first,
-% only checks fir this if over_budget_fail = false; 
-no_value_reduction = true; 
+% only checks fir this if over_budget_fail = false;
+no_value_reduction = true;
 
 interaction_flag = false; % note see disc_param needs to be set to something other than [1,1] for this to work.
 failure_prob = true;  % if false, then prob failure set to 0 and B:C and PPP are identical. If true then have prob of failure for each project.
 prob_uncerainty = true; % This only has an effect when failure_prob = true; This determine whether there is uncertainty in the prob of failure
 
 
-% range for discount for multiple spp on a single island 
+% range for discount for multiple spp on a single island
 disc_param = [.7,.9];
 % e.g. to make a 20% discount would be disc_param = [0.8,0.8];
 % and disc_param = [0.7,0.8]; discount randomly would range from between 70% and 80%
@@ -31,7 +40,7 @@ cost_sigma = 0.5;
 prob_shape = 20; %smaller = more variation. ~5 for lots of variation, ~30-50 for minimal variation
 prob_dist_mean = .75;  %average probability of success
 
-%estimated cost & value - normal distribution 
+%estimated cost & value - normal distribution
 est_mu = 1;
 est_sigma = 0.5; % bigger -> more variation
 
@@ -74,40 +83,40 @@ while r < reps
     r/reps
     
     %generate true values
-    true_cost = unifrnd(3,6,n_islands,n_species)*1e6; % true cost between 3 and 6 million
-    true_disc = unifrnd(disc_param(1),disc_param(2),n_islands,n_species); %discout parameter form uniform distribution
-    true_value = unifrnd(1,2,n_islands,n_species); % true value from between 0 and 1
+    true_cost = unifrnd_2(3,6,n_islands,n_species)*1e6; % true cost between 3 and 6 million
+    true_disc = unifrnd_2(disc_param(1),disc_param(2),n_islands,n_species); %discout parameter form uniform distribution
+    true_value = unifrnd_2(1,2,n_islands,n_species); % true value from between 0 and 1
     
-   
+    
     
     if ~failure_prob
         true_prob(:) = 1; % projects always succeed
     else
-        true_prob = unifrnd(.2,.8,[n_islands,n_species]); % generatee true probability of success from .2 to .8.
+        true_prob = unifrnd_2(.2,.8,[n_islands,n_species]); % generatee true probability of success from .2 to .8.
     end
     
-    proj_succ = true_prob > rand(size(true_prob)); % draw wheather each project is successfull or not
+    proj_succ = true_prob > unifrnd_2(0,1,size(true_prob)); % draw wheather each project is successfull or not
     
-
+    
     if cost_unceratinty == false % check if there is cost uncertainty or not
         removal_cost_est = true_cost; % if not, the estiamted cost is the true cost
     else
-        removal_cost_est = true_cost+(unifrnd(-1.5,1.5,n_islands,n_species))*1e6; % estimate the cost from +- 1.5 million around the true value
+        removal_cost_est = true_cost+(unifrnd_2(-1.5,1.5,n_islands,n_species))*1e6; % estimate the cost from +- 1.5 million around the true value
     end
-
-    removal_value_est = true_value+unifrnd(-1,1,[n_islands,n_species]); % estiamte the value from +-1 around the true value (hence estimated values can be between 0 and 3)
+    
+    removal_value_est = true_value+unifrnd_2(-1,1,[n_islands,n_species]); % estiamte the value from +-1 around the true value (hence estimated values can be between 0 and 3)
     
     
     if interaction_flag % check if there are interactions
         unc_range = min([disc_param(1),1-disc_param(2)]); % set the maximum range of uncertainty such that discount_est will never be < 0 or > 1.
-        removal_discount_est = true_disc + unifrnd(-unc_range,unc_range,n_islands,n_species); %draw remaoval discount est from a unifrom distribution
+        removal_discount_est = true_disc + unifrnd_2(-unc_range,unc_range,n_islands,n_species); %draw remaoval discount est from a unifrom distribution
     else
         removal_discount_est = true_disc; %if no interactions, set removal discount estimate to be the true discout.
     end
     
     if prob_uncerainty
-        % this is the probability of sucess uncertainty. 
-        removal_prob_est = true_prob + unifrnd(-.2,.2,n_islands,n_species); %draw from a uniform distribution
+        % this is the probability of sucess uncertainty.
+        removal_prob_est = true_prob + unifrnd_2(-.2,.2,n_islands,n_species); %draw from a uniform distribution
     else
         removal_prob_est = true_prob; %if no uncertainty, set equal to true value.
     end
@@ -143,7 +152,7 @@ while r < reps
     %create an array that holds all of the important quantities, of which a
     %subset will be stored
     outputs = [est_value_vec,value_vec,rev_value_vec,est_cost_vec,cost_vec,est_value_vec_success,value_vec_success,est_prob_vec,true_prob_vec,sum(logical_matrix,2)];
-    %cols: 1. exp value, 2. true value, 3. exp. cost, 4. rev. cost, 5. exp val all success, 
+    %cols: 1. exp value, 2. true value, 3. exp. cost, 4. rev. cost, 5. exp val all success,
     %6. rev val all success, 7. sum exp pr, 8. sum rev pr., 9 no. proj selected
     
     
@@ -176,18 +185,18 @@ while r < reps
         if isempty(under_budget)
             flag = 1; %if nothing is affordable, then exit
         else
-        new_project = under_budget(ceil(rand*length(under_budget))); %randomly add an affordable project
-        rand_action_vec(new_project) = 1; %set that project to 1 in the aciton set
-        budget_rem = budget_rem - removal_cost_est(new_project); %remove cost from remaining budget
+            new_project = under_budget(ceil(unifrnd_2(0,1)*length(under_budget))); %randomly add an affordable project
+            rand_action_vec(new_project) = 1; %set that project to 1 in the aciton set
+            budget_rem = budget_rem - removal_cost_est(new_project); %remove cost from remaining budget
         end
     end
     rand_action_set = find(ismember(logical_matrix,rand_action_vec,'rows'),1);%find which action set this corresponds to
     
     
-    actions_set = [rev_opt,true_opt,exp_opt,ppp_action_set,cost_ben_action_set,rand_action_set]; %store all of the chosen action sets from all of the methods    
+    actions_set = [rev_opt,true_opt,exp_opt,ppp_action_set,cost_ben_action_set,rand_action_set]; %store all of the chosen action sets from all of the methods
     if over_budget_fail %if being over-budget causes failures
         overbudget = cost_vec>Budget; %check which action sets are over budget
-        overbudget_index = find(overbudget); % get their indices 
+        overbudget_index = find(overbudget); % get their indices
         n_projects = sum(logical_matrix,2); %store the number of projets in each action set
         min_proj_over = min(n_projects(overbudget)); % the fewest actions that are overbudget
         max_proj_over = max(n_projects(overbudget)); % the most actions that are overbudget
@@ -199,11 +208,11 @@ while r < reps
                         keyboard
                     end
                     project_choices = logical_matrix(current_projects(j),:); %find which projects were chosen
-                    project_choices(randsample(find(project_choices==1),1)) = 0; %randomly 
+                    project_choices(randsample_2(find(project_choices==1),1)) = 0; %randomly
                     new_val_index = find(ismember(logical_matrix,project_choices,'rows')); %find the new index for the set of projects
                     while cost_vec(new_val_index) > Budget % if the true cost is still above the dubdget, continue removing projects
                         project_choices = logical_matrix(new_val_index,:);
-                        project_choices(randsample(find(project_choices==1),1)) = 0;
+                        project_choices(randsample_2(find(project_choices==1),1)) = 0;
                         new_val_index = find(ismember(logical_matrix,project_choices,'rows'));
                     end
                     value_vec(current_projects(j)) = value_vec(new_val_index); % update true value of the project set
@@ -214,7 +223,7 @@ while r < reps
     else %scale the final value by the amount overbudget
         if no_value_reduction == false
             scaling = ones(size(cost_vec)); %initialise a vector of ones
-            scaling(cost_vec>Budget) = Budget./cost_vec(cost_vec>Budget); % calculate the % overbudget acion sets are 
+            scaling(cost_vec>Budget) = Budget./cost_vec(cost_vec>Budget); % calculate the % overbudget acion sets are
             value_vec = value_vec.*scaling; % reduce the value if overbudget
             rev_value_vec = rev_value_vec.*scaling; % reduce the value if overbudget
         end
@@ -232,20 +241,20 @@ while r < reps
     true_opt_array(r,:) = outputs(true_opt,:);
     exp_opt_array(r,:) = outputs(exp_opt,:);
     
-% 
-%     if rev_opt_array(r,:) == 0
-%         keyboard
-%     end
-
+    %
+    %     if rev_opt_array(r,:) == 0
+    %         keyboard
+    %     end
+    
 end
 
 %scale all of the values by the performance of the revealed optimal choice
-% true_opt_array(:,[1,3,6,7]) = true_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-% exp_opt_array(:,[1,3,6,7]) = exp_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-% cost_ben_array(:,[1,3,6,7]) = cost_ben_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-% ppp_array(:,[1,3,6,7]) = ppp_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-% rand_sel_array(:,[1,3,6,7]) = rand_sel_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
-% rev_opt_array(:,[1,3,6,7]) = rev_opt_array(:,[1,3,6,7])./repmat(rev_opt_array(:,6),1,4);
+% exp_opt_array(:,[1,3,6,7]) = exp_opt_array(:,[1,3,6,7])./repmat(true_opt_array(:,6),1,4);
+% cost_ben_array(:,[1,3,6,7]) = cost_ben_array(:,[1,3,6,7])./repmat(true_opt_array(:,6),1,4);
+% ppp_array(:,[1,3,6,7]) = ppp_array(:,[1,3,6,7])./repmat(true_opt_array(:,6),1,4);
+% rand_sel_array(:,[1,3,6,7]) = rand_sel_array(:,[1,3,6,7])./repmat(true_opt_array(:,6),1,4);
+% rev_opt_array(:,[1,3,6,7]) = rev_opt_array(:,[1,3,6,7])./repmat(true_opt_array(:,6),1,4);
+% true_opt_array(:,[1,3,6,7]) = true_opt_array(:,[1,3,6,7])./repmat(true_opt_array(:,6),1,4);
 
 % calculate means
 rev_opt_mean = mean(rev_opt_array);
@@ -277,9 +286,9 @@ legend('true opt','exp opt','ppp','cost ben','rand','location','best')
 % cost_ben_array = exp_opt_array;
 % ppp_array = exp_opt_array;
 % rand_sel_array = exp_opt_array;
- %cols: 1. exp value, 2. true value, 3. exp. cost, 4. rev. cost, 5. exp val all success, 
-    %6. rev val all success, 7. sum exp pr, 8. sum rev pr., 9 no. proj selected
-    
+%cols: 1. exp value, 2. true value, 3. exp. cost, 4. rev. cost, 5. exp val all success,
+%6. rev val all success, 7. sum exp pr, 8. sum rev pr., 9 no. proj selected
+
 figure(2)
 clf
 hold on
@@ -312,3 +321,43 @@ csvwrite(['opt_allocation_nisl',num2str(n_islands),'_nsp',num2str(n_species),'_r
 csvwrite(['opt_allocation_true_nisl',num2str(n_islands),'_nsp',num2str(n_species),'_rep',num2str(reps),'.csv'],true_opt_array)
 csvwrite(['opt_allocation_revealed_nisl',num2str(n_islands),'_nsp',num2str(n_species),'_rep',num2str(reps),'.csv'],rev_opt_array)
 
+
+    function output = unifrnd_2(a,b,varargin)
+        if use_file
+            if isempty(varargin)
+                s = [1,1];
+            else
+                if length(varargin) == 1
+                    s = varargin{1};
+                else
+                    s = [varargin{1},varargin{2}];
+                end
+            end
+            
+            num = prod(s);
+            if counter + num > 1e7
+                counter = 1;
+            end
+            nums = r_nums(counter:counter+num-1);
+            counter = counter + num;
+            nums = nums*(b-a)+a;
+            output = reshape(nums,s(1),s(2));
+        else
+            output = unifrnd(a,b,varargin);
+        end
+        
+    end
+
+    function out = randsample_2(opts,~)
+        if use_file
+            len = length(opts);
+            rnum = ceil(r_nums(counter)*len);
+            counter = counter + 1;
+            out = opts(rnum);
+        else
+            out = randsample(opts);
+        end
+    end
+%
+
+end
