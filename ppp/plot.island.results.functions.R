@@ -1,5 +1,6 @@
 
 library('boot') 	# For doing bootstrap estimates for the CIs of the mean
+library(MASS)
 
 read.data <- function(fname) {
 	
@@ -18,6 +19,8 @@ read.data <- function(fname) {
 						'summed.revealed.prob',  # Sum of revealed prob of success for all projects selected
 						'num.projects.selected' # The number of projects chosen
 						)
+
+	# To 
 		
 	# remove any entries with NaN's in them
 	
@@ -257,8 +260,8 @@ plot.performance.vs.suprise <- function() {
 
 	plot( mean(ppp$revealed.val), mean(ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)]),
 		col='red', pch=1, xlab='revealed benefit', ylab='surprise in benefit', 
-		# xlim=c(0, 0.9), ylim=c(-1.5,  0.5), 
-		xlim=c(0, 7), ylim=c(-1.5,  0.5), 
+		xlim=c(1, 8.5), ylim=c(-4,  1), 
+		# xlim=c(2.8, 6), ylim=c(-0.75,  0.05), 
 		cex=1.5)
 	plot.segments(ppp$revealed.val, ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)], col='red' )
 	
@@ -270,7 +273,21 @@ plot.performance.vs.suprise <- function() {
 
 	legend('topright', c('ppp', 'random', 'opt', 'opt true'), col=c('red','black', 'blue', 'green'), pch=c(1,1,1,1) )
 	abline(h=0, col='grey')
-	browser()
+
+
+	plot( ppp$revealed.val, ppp$benefit.surprise,
+		col='red', pch=1, xlab='revealed benefit', ylab='surprise in benefit', 
+		xlim=c(1, 8.5), ylim=c(-4,  1), 
+		cex=1.5)
+
+	# maybe do a 2D density plot?? See http://www2.warwick.ac.uk/fac/sci/moac/people/students/peter_cock/r/density/ 
+
+	x <- ran$revealed.val[which(ran$benefit.surprise > -Inf)]
+	y <- ran$benefit.surprise[which(ran$benefit.surprise > -Inf)]
+	
+	density <- kde2d(x,y, n=361)
+	filled.contour(density, xlim=c(1, 8.5), ylim=c(-4,  1))
+	 browser()
 
 }
 
