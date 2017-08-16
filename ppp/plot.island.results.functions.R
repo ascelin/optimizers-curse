@@ -1,4 +1,6 @@
 
+library('boot') 	# For doing bootstrap estimates for the CIs of the mean
+library(MASS)
 
 read.data <- function(fname) {
 	
@@ -17,6 +19,8 @@ read.data <- function(fname) {
 						'summed.revealed.prob',  # Sum of revealed prob of success for all projects selected
 						'num.projects.selected' # The number of projects chosen
 						)
+
+	# To 
 		
 	# remove any entries with NaN's in them
 	
@@ -215,24 +219,52 @@ plot.performance.vs.suprise <- function() {
 	legend('topright', c('ppp', 'opt', 'opt true'), col=c('red','blue', 'green'), pch=c(1,1,1) )
 	abline(h=0, col='grey')
 
+    my.mean = function(x, indices) {
+        return( mean( x[indices] ) )
+    }
 
 	plot.segments <- function(x,y,col){
-		segments( mean(x)-sd(x), mean(y), mean(x)+sd(x), mean(y), col=col )
-		segments( mean(x), mean(y)-sd(y), mean(x), mean(y) + sd(y), col=col )
+
+        # boostrap the 95 CIs on the estimations of the mean
+        # see eg end of http://www.stat.wisc.edu/~larget/stat302/chap3.pdf
+
+        x.boot = boot(x, my.mean, 1000)
+        xbci <- boot.ci(x.boot)
+
+        y.boot = boot(y, my.mean, 1000)
+        ybci <- boot.ci(y.boot)
+
+		#segments( mean(x)-sd(x), mean(y), mean(x)+sd(x), mean(y), col=col )
+		#segments( mean(x), mean(y)-sd(y), mean(x), mean(y) + sd(y), col=col )
+
+        # use normal
+        # segments( xbci$normal[2], mean(y), xbci$normal[3], mean(y), col=col )
+        # segments( mean(x), ybci$normal[2], mean(x), ybci$normal[3], col=col )
+
+        # use BCa
+        segments( xbci$bca[4], mean(y), xbci$bca[5], mean(y), col=col )
+        segments( mean(x), ybci$bca[4], mean(x), ybci$bca[5], col=col )
+
+
+
+        #browser()
 	}
 	plot.points.and.segments <- function(x, y, col){
 		points( mean(x), mean(y), col=col, pch=1, cex=1.5)
 		plot.segments(x, y, col)
 	}
 
+	
+
 	par(mfrow=c(1,1))
 
 	plot( mean(ppp$revealed.val), mean(ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)]),
 		col='red', pch=1, xlab='revealed benefit', ylab='surprise in benefit', 
-		# xlim=c(0, 0.9), ylim=c(-1.5,  0.5), 
-		xlim=c(0, 7), ylim=c(-1.5,  0.5), 
+		xlim=c(1, 8.5), ylim=c(-4,  1), 
+		# xlim=c(2.8, 6), ylim=c(-0.75,  0.05), 
 		cex=1.5)
 	plot.segments(ppp$revealed.val, ppp$benefit.surprise[which(ppp$benefit.surprise > -Inf)], col='red' )
+	
 	
 	plot.points.and.segments(ran$revealed.val, ran$benefit.surprise[which(ran$benefit.surprise > -Inf)], col='black')
 	plot.points.and.segments(opt$revealed.val, opt$benefit.surprise[which(opt$benefit.surprise > -Inf)], col='blue')
@@ -241,7 +273,21 @@ plot.performance.vs.suprise <- function() {
 
 	legend('topright', c('ppp', 'random', 'opt', 'opt true'), col=c('red','black', 'blue', 'green'), pch=c(1,1,1,1) )
 	abline(h=0, col='grey')
-	browser()
+
+
+	plot( ppp$revealed.val, ppp$benefit.surprise,
+		col='red', pch=1, xlab='revealed benefit', ylab='surprise in benefit', 
+		xlim=c(1, 8.5), ylim=c(-4,  1), 
+		cex=1.5)
+
+	# maybe do a 2D density plot?? See http://www2.warwick.ac.uk/fac/sci/moac/people/students/peter_cock/r/density/ 
+
+	x <- ran$revealed.val[which(ran$benefit.surprise > -Inf)]
+	y <- ran$benefit.surprise[which(ran$benefit.surprise > -Inf)]
+	
+	density <- kde2d(x,y, n=361)
+	filled.contour(density, xlim=c(1, 8.5), ylim=c(-4,  1))
+	 browser()
 
 }
 

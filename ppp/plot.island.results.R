@@ -14,11 +14,13 @@ source( 'plot.island.results.functions.R' )
 
 p <- function(fname) {
 	#x <- 'updated_results/'
-	x <- 'updated_results_no_scaling/'
+	# x <- 'updated_results_no_scaling/'
+	x <- 'updated_results_new_scaling/'
 	return(paste(x,fname, sep=''))
 
 }
- 
+
+
 ran <- read.data(p('random_allocation_nisl3_nsp4_rep1000.csv'))
 ran <- plot.results(ran, 'RANDOM')
 
@@ -39,8 +41,8 @@ opt.true <- read.data(p('opt_allocation_true_nisl3_nsp4_rep1000.csv'))
 opt.true<- plot.results(opt.true, 'TRUE OPTIMAL')
 
 # the optimal on all the revealed values (and knowing which will succeed or fail)
-opt.true.revealed <- read.data(p('opt_allocation_true_nisl3_nsp4_rep1000.csv'))
-opt.true.revealed<- plot.results(opt.true, 'TRUE OPTIMAL REVEALED')
+opt.true.revealed <- read.data(p('opt_allocation_revealed_nisl3_nsp4_rep1000.csv'))
+opt.true.revealed<- plot.results(opt.true.revealed, 'TRUE OPTIMAL REVEALED')
 
 
 plot.performance.vs.suprise()
