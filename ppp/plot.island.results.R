@@ -14,19 +14,22 @@ source( 'plot.island.results.functions.R' )
 
 p <- function(fname) {
 	#x <- 'updated_results/'
-	# x <- 'updated_results_no_scaling/'
-	x <- 'updated_results_new_scaling/'
+	x <- 'updated_results_no_scaling/'
+	
 	return(paste(x,fname, sep=''))
 
 }
 
 
-ran <- read.data(p('random_allocation_nisl3_nsp4_rep1000.csv'))
-ran <- plot.results(ran, 'RANDOM')
+ran.orig <- read.data(p('random_allocation_nisl3_nsp4_rep1000.csv'))
+ran <- plot.results(ran.orig, 'RANDOM')
 
 par(mfrow=c(3,2))
 ppp <- read.data(p('ppp_allocation_nisl3_nsp4_rep1000.csv'))
-ppp <- plot.results(ppp, 'PPP')
+ppp.rescaled <- rescale.results(ppp, ran.orig)
+
+# ppp <- plot.results(ppp, 'PPP')
+ppp <- plot.results(ppp.rescaled, 'PPP')
 
 # cb <- read.data(p('cost_ben_allocation_nisl3_nsp4_rep1000.csv'))
 # cb <- plot.results(cb, 'COST:BEN')
@@ -34,7 +37,7 @@ ppp <- plot.results(ppp, 'PPP')
 par(mfrow=c(3,2))
 # the optimal on all the expected values (don't know which succeed or fail)
 opt <- read.data(p('opt_allocation_nisl3_nsp4_rep1000.csv'))
-opt<- plot.results(opt, 'OPTIMAL')
+opt <- plot.results(opt, 'OPTIMAL')
 
 # the optimal on all the revealed values (don't know which succeed or fail)
 opt.true <- read.data(p('opt_allocation_true_nisl3_nsp4_rep1000.csv'))

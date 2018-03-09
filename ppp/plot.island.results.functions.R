@@ -33,6 +33,26 @@ read.data <- function(fname) {
 }
  
 
+rescale.results <- function(res, ran){
+
+	# make a new df to hold the results
+	rescaled <- ran; rescaled[,] <- -999
+
+	
+	
+	for(i in 1:dim(ran)[2]) {
+
+		rescaled[,i] <- (res[,i] - ran[,i])/max(ran)
+
+	}
+
+	# hist(res$expected.cost)#, xlim=c(0,10))
+	# hist(ran$expected.cost)#, xlim=c(0,10))
+	# hist(rescaled$expected.cost)#, xlim=c(0,10))
+	return(rescaled)
+}
+
+
  plot.results <- function(dat, title.text) {
 
  	# Calculate surprises in cost and benefit
@@ -65,6 +85,7 @@ read.data <- function(fname) {
 
 	par(mfrow=c(4,2))
 
+	# browser()
 	# Plot the cost surprise
 	plot(dat$expected.cost,dat$revealed.cost, pch=pch.val, main='true vs expected cost')
 	abline(a=0, b=1, col='red')
